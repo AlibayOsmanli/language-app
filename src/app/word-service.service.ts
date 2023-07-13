@@ -1,52 +1,55 @@
 import { Injectable } from '@angular/core';
-import { AngularFireDatabase } from '@angular/fire/database';
-import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
+
 export class WordService {
-  constructor(private db: AngularFireDatabase) {}
+  private words: { word: string; translation: string }[] = [];
 
-  addWord(word: string, translation: string): Promise<void> {
-    if (word.length !== 0 && translation.length !== 0) {
-      const newWord = { word, translation };
-      return new Promise<void>((resolve, reject) => {
-        this.db.list('words')
-          .push(newWord)
-          .then(() => {
-            resolve();
-          })
-          .catch((error) => {
-            reject(error);
-          });
-      });
+  constructor() {
+    const savedWords = localStorage.getItem('words');
+    if (savedWords) {
+      this.words = JSON.parse(savedWords);
     }
-    return Promise.reject('Invalid word or translation');
-  }
-  
-
-  getWords(): Observable<any[]> {
-    return this.db.list('words').valueChanges();
   }
 
-  clearWords(): Promise<void> {
-    return this.db.list('words').remove();
-  }
-
-  updateWord(word: any): Promise<void> {
-    const index = word.$key;
-    if (index !== undefined) {
-      return this.db.object(`words/${index}`).update(word);
+  addWord(word: string, translation: string) : boolean {
+    if(word.length !== 0 && translation.length !== 0) {
+      for(let i = 0; i < this.words.length; i++) {
+        if(this.words[i].word === word && this.words[i].translation === translation) {
+          return false;
+        }
+      }
+      this.words.push({ word, translation });
+      localStorage.setItem('words', JSON.stringify(this.words));
+      return true;
     }
-    return Promise.reject('Invalid word');
+    return false;
   }
 
-  deleteWord(word: any): Promise<void> {
-    const index = word.$key;
-    if (index !== undefined) {
-      return this.db.object(`words/${index}`).remove();
+  getWords() {
+    return this.words;
+  }
+
+  clearWords() {
+    this.words = [];
+    localStorage.removeItem('words');
+  }
+
+  updateWord(word: any) {
+    const index = this.words.findIndex(w => w === word);
+    if (index !== -1) {
+      this.words[index] = word;
     }
-    return Promise.reject('Invalid word');
+    localStorage.setItem('words', JSON.stringify(this.words));
+  }
+
+  deleteWord(word: { word: string; translation: string }) {
+    const index = this.words.findIndex(w => w.word === word.word && w.translation === word.translation);
+    if (index !== -1) {
+      this.words.splice(index, 1);
+      localStorage.setItem('words', JSON.stringify(this.words));
+    }
   }
 }

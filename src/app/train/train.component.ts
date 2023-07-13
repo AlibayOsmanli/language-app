@@ -12,12 +12,12 @@ export class TrainComponent {
 
   words: { word: string; translation: string; flipped: boolean }[] = [];
 
-  constructor(private wordService: WordService, private elementRef: ElementRef) {}
+  constructor(private wordService: WordService, private elementRef: ElementRef) {
+    this.words = this.wordService.getWords().map((word) => ({
+      ...word,
+      flipped: false,
+    }));
 
-  ngOnInit() {
-    this.wordService.getWords().subscribe((words) => {
-      this.words = words.map((word) => ({ ...word, flipped: false }));
-    });
   }
 
   clearAll() {
@@ -25,7 +25,7 @@ export class TrainComponent {
     this.words = [];
   }
 
-// This solution is from internet to make the card flip when only the card is clicked
+  // This solution is from internet to make the card flip when only the card is clicked
   flipCard(event: MouseEvent, word: any) {
     const clickedElement = event.target as HTMLElement;
 
@@ -41,7 +41,7 @@ export class TrainComponent {
     word.flipped = !word.flipped;
   }*/
   
-
+  
   editWord(word: any) {
     const newWord = prompt('Enter the new word:', word.word);
     const newTranslation = prompt('Enter the new translation:', word.translation);
@@ -55,6 +55,7 @@ export class TrainComponent {
   deleteWord(word: any) {
     if (confirm('Are you sure you want to delete this word?')) {
       this.wordService.deleteWord(word);
+      this.words = this.words.filter((w) => w !== word);
     }
   }
 }
