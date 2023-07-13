@@ -39,17 +39,17 @@ export class WordService {
 
   updateWord(word: any) {
     const index = this.words.findIndex(w => w === word);
-    if (index !== -1) {
+    //if (index !== -1) {
       this.words[index] = word;
-    }
+    //}
     localStorage.setItem('words', JSON.stringify(this.words));
   }
 
   deleteWord(word: { word: string; translation: string }) {
     const index = this.words.findIndex(w => w.word === word.word && w.translation === word.translation);
-    if (index !== -1) {
+    //if (index !== -1) {
       this.words.splice(index, 1);
       localStorage.setItem('words', JSON.stringify(this.words));
-    }
+   //}
   }
 }
