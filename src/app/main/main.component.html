@@ -1,0 +1,7 @@
+<div>
+  <label class="label">Word:</label>
+  <input type="text" [(ngModel)]="word" class="form input" (keyup.enter)="addWord()" />
+  <label class="label">Translation:</label>
+  <input type="text" [(ngModel)]="translation" class="form input" (keyup.enter)="addWord()" />
+  <button (click)="addWord()" class="form button">Add</button>
+</div>

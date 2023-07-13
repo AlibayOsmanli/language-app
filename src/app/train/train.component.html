@@ -1,0 +1,15 @@
+<div>
+  <button (click)="clearAll()">Clear All</button>
+</div>
+<div *ngFor="let word of words" (click)="flipCard($event, word)">
+  <div class="card" [class.flipped]="word.flipped" #card>
+    <div class="front">
+      <h2>{{ word.word }}</h2>
+    </div>
+    <div class="back">
+      <h2>{{ word.translation }}</h2>
+    </div>
+  </div>
+  <button (click)="editWord(word)">Edit</button>
+  <button (click)="deleteWord(word)">Delete</button>
+</div>
